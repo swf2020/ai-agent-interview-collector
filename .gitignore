@@ -1,2 +1,5 @@
 # Evaluation workspace
 workspace/
+
+# npm
+node_modules/

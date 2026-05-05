@@ -1,0 +1,19 @@
+{
+  "name": "ai-agent-interview-collector",
+  "version": "1.0.0",
+  "description": "AI Agent 社招面试题自动采集与整理工具",
+  "bin": {
+    "ai-agent-interview-collector": "./bin/cli.js"
+  },
+  "keywords": [
+    "ai-agent",
+    "interview",
+    "claude-code",
+    "skill"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swf2020/ai-agent-interview-collector.git"
+  }
+}
