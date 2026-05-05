@@ -12,16 +12,29 @@
 
 ## 安装
 
-### 方式一：作为 Claude Code Skill 使用
+### 使用 npx 安装（推荐）
 
 ```bash
-git clone https://github.com/swf2020/ai-agent-interview-collector.git
-cp -r ai-agent-interview-collector ~/.claude/skills/ai-agent-interview-collector
+npx ai-agent-interview-collector
 ```
 
-### 方式二：手动触发
+该命令会自动将 skill 文件复制到 `~/.claude/skills/ai-agent-interview-collector` 目录。
 
-直接在 Claude Code 对话中说：
+更新 skill：
+
+```bash
+npx ai-agent-interview-collector update
+```
+
+卸载：
+
+```bash
+npx ai-agent-interview-collector uninstall
+```
+
+### 在 Claude Code 中使用
+
+安装完成后，在 Claude Code 对话中直接说：
 - "更新面试题集"
 - "刷新 AI Agent 面试题"
 - "收集最新面试题"
@@ -40,8 +53,9 @@ cp -r ai-agent-interview-collector ~/.claude/skills/ai-agent-interview-collector
 
 ```
 ├── SKILL.md                    # Skill 定义（核心）
-├── evals/
-│   └── evals.json              # 测试用例
+├── package.json                # npm 包配置（支持 npx 安装）
+├── bin/
+│   └── cli.js                  # CLI 入口脚本
 ├── samples/                    # 输出示例
 │   ├── ai_agent_interview_questions_20260502.md
 │   └── answers/
