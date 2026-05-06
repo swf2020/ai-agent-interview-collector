@@ -19,7 +19,7 @@ description: >
 
 ## Step 1：搜索采集
 
-使用 `web_access` skill（或 WebSearch/WebFetch 工具）依次执行以下 16 条搜索，**时间范围限定近 12 个月**。
+使用 `web_access` skill 依次执行以下 16 条搜索（优先通过 CDP 浏览器模式采集，以获得最佳反爬绕过效果；若未安装 web_access，可降级使用 WebSearch/WebFetch 工具），**时间范围限定近 12 个月**。
 
 > 说明：每条搜索都要做。若某个平台搜索失败或无结果，记录为"跳过"后继续下一条，不中断整体流程。
 
