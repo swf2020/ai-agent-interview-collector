@@ -49,6 +49,34 @@ npx ai-agent-interview-collector uninstall
 
 完整示例见 `samples/` 目录。
 
+## 前置依赖
+
+本 skill 的核心流程依赖联网采集能力，推荐安装 [web-access](https://github.com/eze-is/web-access) skill 以获得 CDP 浏览器模式支持：
+
+### 安装 web-access
+
+```bash
+git clone https://github.com/eze-is/web-access ~/.claude/skills/web-access
+```
+
+或直接让 Claude 安装：
+```
+帮我安装这个 skill：https://github.com/eze-is/web-access
+```
+
+### CDP 前置配置
+
+1. Chrome 地址栏打开 `chrome://inspect/#remote-debugging`
+2. 勾选 **Allow remote debugging for this browser instance**（可能需要重启浏览器）
+
+检查环境：
+
+```bash
+bash ~/.claude/skills/web-access/scripts/check-deps.sh
+```
+
+> 未安装 web-access 时，采集流程会降级使用内置的 WebSearch/WebFetch 工具，但部分反爬较强的平台（如小红书）可能无法采集。
+
 ## 目录结构
 
 ```
