@@ -40,6 +40,23 @@ npx ai-agent-interview-collector uninstall
 - "收集最新面试题"
 - "跑一次面试题采集"
 
+### 在 OpenClaw 中使用
+
+1. 将本仓库的 `SKILL.md` 文件复制到 OpenClaw 的 skills 目录：
+
+```bash
+mkdir -p ~/.openclaw/skills/ai-agent-interview-collector
+cp SKILL.md ~/.openclaw/skills/ai-agent-interview-collector/
+```
+
+2. 在 OpenClaw 对话中使用相同的触发词：
+   - "更新面试题集"
+   - "刷新 AI Agent 面试题"
+   - "收集最新面试题"
+   - "跑一次面试题采集"
+
+3. 输出文件默认生成在 OpenClaw 当前工作目录下，与 Claude Code 环境输出格式一致。
+
 ## 输出示例
 
 运行后会生成两个部分：
