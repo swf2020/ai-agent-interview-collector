@@ -355,8 +355,8 @@ description: >
 
 ## 一面（基础知识）
 
-- [来源:牛客][2026-03] [Module 1] Transformer 的 KV Cache 是什么？ → 详见 [解答](../answers/module_01_prompt_llm.md#Q1)
-- [来源:小红书][2026-02] [Module 2] RAG 的完整链路是怎样的？ → 详见 [解答](../answers/module_02_rag.md#Q3)
+- [来源:牛客][2026-03] [Module 1] Transformer 的 KV Cache 是什么？ → 详见 [解答](../../answers/module_01_prompt_llm.md#Q1)
+- [来源:小红书][2026-02] [Module 2] RAG 的完整链路是怎样的？ → 详见 [解答](../../answers/module_02_rag.md#Q3)
 
 ## 二面（项目细节与系统设计）
 
@@ -387,6 +387,11 @@ description: >
 - 每个公司文件中，只列出该公司出现过的轮次 section，空轮次不显示
 - 题目中的 `[Module N]` 标签标注该题所属的知识模块编号
 - 答案引用使用相对路径指向 `answers/` 目录下的模块解答文件
+- **相对路径规则**：公司文件位于 `company/{大类}/{公司名}.md`，比 `answers/` 多两层目录嵌套，因此到答案文件的相对路径必须使用 `../../answers/module_XX_xxx.md`（不能使用 `../answers/` 或绝对路径）
+- **生成后校验**：所有公司文件生成完毕后，必须检查每个文件中的 `详见 [解答]` 链接格式：
+  - 链接必须匹配 `](../../answers/module_` 前缀（即 `../../answers/` 相对路径）
+  - 若发现链接使用 `../../samples/answers/`、`../answers/` 或其他错误路径，必须修正为 `../../answers/`
+  - 校验通过后再汇报给用户
 
 ### 7.3 公司索引文件格式
 
