@@ -59,6 +59,20 @@ description: >
 | 牛客、CSDN、知乎 | `web_access` 优先，降级可用 | 对搜索引擎较友好，WebFetch 可获取部分内容 |
 | 黑马程序员、尚硅谷 | `web_access` 或 WebFetch 均可 | 培训机构公开内容，访问门槛低 |
 
+**使用 web_access 采集具体平台前，必须先加载对应站点的经验文件：**
+
+本 skill 在 `references/site-patterns/` 目录下维护了各站点的爬取经验（API 端点、CDP 脚本模式、已知陷阱），这些文件针对 AI Agent 面试题采集场景做了专项增强。直接用 web_access 通用能力（打开页面、滚动）处理反爬严格的站点大概率失败——每个站点有特殊的 API、鉴权参数和反直觉行为，必须提前加载经验文件才能正确操作。
+
+| 平台 | 采集前必须先 Read |
+|------|------------------|
+| 小红书 | `references/site-patterns/xiaohongshu.md` |
+| B站 | `references/site-patterns/bilibili.md` |
+| BOSS直聘 | `references/site-patterns/zhipin.com.md` |
+
+> 加载后你会获得该站点的：URL 结构与路由规则、已验证的 CDP curl 命令模板（含关键鉴权参数）、已知陷阱列表（如小红书缺少 xsec_token 返回 404、B站搜索 API 直接 curl 触发 412 风控、Referer 头导致字幕 URL 为空等）。跳过此步骤会导致反复试错，大量浪费 token。
+>
+> 若本地文件不存在或内容不足，回退到 `${CLAUDE_SKILL_DIR}/web-access/references/site-patterns/{domain}.md`。
+
 **对每条搜索结果：**
 - 优先通过 `web_access` skill 取前 3-5 个最相关的 URL，抓取页面正文
 - 从正文中提取**明确以面试题形式出现**的问题句
@@ -627,3 +641,4 @@ AI Agent 专项题（带模块标签和解答链接）：
 - 输出文件名含日期，方便按版本追溯历史
 - **生成完毕后必须执行 7.5 公司索引校验**，确保 `company_index.md` 中所有"已采集公司"链接指向的文件真实存在，分类和统计数据一致
 - **增量模式下已有答案不重复生成**：优先检查 `samples/answers/` 已有解答文件，仅对新题目生成答案并追加写入，不覆盖已有内容，不创建 `_new.md` 临时文件
+- **必须加载站点经验文件**：小红书/B站/脉脉等反爬严格的平台，直接用 web_access 通用 CDP 指令大概率失败。每次采集对应平台前，务必先用 Read 工具加载本 skill 的 `references/site-patterns/{domain}.md`（优先），若本地文件不存在则回退到 `${CLAUDE_SKILL_DIR}/web-access/references/site-patterns/{domain}.md`，获取该站点的 API 端点、CDP 脚本模式和已知陷阱，再按经验文件中的 curl 模板操作
