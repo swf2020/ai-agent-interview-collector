@@ -1,5 +1,9 @@
 # Evaluation workspace
 workspace/
+.git/
+ocr_tmp/
+.DS_Store
 
+scripts/
 # npm
 node_modules/
