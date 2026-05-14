@@ -4,13 +4,31 @@
 
 ## 功能特性
 
-- **自动搜索采集**：覆盖牛客/小红书/脉脉/B站/知乎/CSDN 等 14+ 中文平台
-- **清洗去重**：只保留真实面试题，语义去重，标注来源平台与日期
+- **自动搜索采集**：覆盖小红书/B站/牛客/CSDN/脉脉/BOSS直聘/猎聘/知乎等 14+ 中文平台，严格按流量置信度优先级分配搜索资源
+- **清洗去重**：只保留真实面试题，语义去重（相似度 >85% 合并），标注来源平台与日期，上限 200 题保证精选
 - **8 大模块分类**：Prompt/LLM 原理、RAG、工具调用、Agent 架构、Multi-Agent、工程落地、云端部署、技术演进
 - **公司分类**：6 大类（互联网公司/外企/AI公司/硬件芯片/创业公司/其他），每类下按具体公司名细分
 - **面试轮次**：一面（基础）/ 二面（系统设计）/ 三面（文化匹配）/ HR面 / 总监面 / 加面 / 综合
-- **并行生成解答**：按模块分 agent 并行生成解答（考察点 → 思路 → 参考答案 + 加分项）
-- **增量更新**：每次只采集新增题目，合并去重后生成新版本
+- **逐题解答**：每题独立 Agent 生成四段式解答（考察点 → 解答思路 → 参考答案 + 加分项），各模块并行执行
+- **增量更新**：每次只采集新增题目，已有答案不重复生成，合并去重后追加到历史文件
+
+## 平台优先级
+
+高流量平台题目置信度更高，采集优先级：**小红书 > B站 > 牛客 > CSDN > 其他网站**（脉脉、知乎、BOSS直聘、猎聘、培训机构等）。
+
+## Agent 架构
+
+全部 7 个步骤通过独立 Agent 执行，主会话负责编排调度：
+
+| Step | Agent 数 | 执行模式 | 说明 |
+|------|---------|---------|------|
+| Step 1 | 5 | **并行** | 按平台分组，5 个 Agent 同时采集 |
+| Step 2 | 1 | 串行 | 汇总 Step 1 结果后清洗去重 |
+| Step 3 | 1 | 串行 | 对清洗结果进行三维护分类 |
+| Step 4 | 1 | 串行 | 增量更新逻辑（合并历史数据） |
+| Step 5 | 1 | 串行 | 生成主题目 Markdown 文件 |
+| Step 6 | N（批量） | **逐题顺序** | 每题独立 Agent，按模块批量并行 |
+| Step 7 | 2 | 串行 | 公司文件生成 + 索引校验 |
 
 ## 安装
 
@@ -51,11 +69,7 @@ mkdir -p ~/.openclaw/skills/ai-agent-interview-collector
 cp SKILL.md ~/.openclaw/skills/ai-agent-interview-collector/
 ```
 
-2. 在 OpenClaw 对话中使用相同的触发词：
-   - "更新面试题集"
-   - "刷新 AI Agent 面试题"
-   - "收集最新面试题"
-   - "跑一次面试题采集"
+2. 在 OpenClaw 对话中使用相同的触发词。
 
 3. 输出文件默认生成在 OpenClaw 当前工作目录下，与 Claude Code 环境输出格式一致。
 
@@ -63,10 +77,10 @@ cp SKILL.md ~/.openclaw/skills/ai-agent-interview-collector/
 
 运行后会生成以下文件：
 
-1. **题集文件**：`ai_agent_interview_questions_YYYYMMDD.md`（按 8 大模块分类，每题标注 `[公司大类|具体公司|轮次]`）
-2. **解答目录**：`answers/` 下按模块分文件
-3. **公司索引**：`company_index.md`（6 大类公司索引）
-4. **公司分类文件**：`company/{公司大类}/{公司名}.md`（按面试轮次分组）
+1. **题集文件**：`samples/ai_agent_interview_questions_YYYYMMDD.md`（200 题，按 8 大模块分类，每题标注来源和解答链接）
+2. **解答目录**：`samples/answers/` 下按模块分文件（每题含考察点/解答思路/参考答案/加分项）
+3. **公司索引**：`samples/company_index.md`（6 大类公司索引）
+4. **公司分类文件**：`samples/company/{公司大类}/{公司名}.md`（按面试轮次分组）
 
 完整示例见 `samples/` 目录。
 
@@ -96,28 +110,49 @@ git clone https://github.com/eze-is/web-access ~/.claude/skills/web-access
 bash ~/.claude/skills/web-access/scripts/check-deps.sh
 ```
 
-> 未安装 web-access 时，采集流程会降级使用内置的 WebSearch/WebFetch 工具，但部分反爬较强的平台（如小红书）可能无法采集。
+> 未安装 web-access 时，采集流程会降级使用内置的 WebSearch/WebFetch 工具，但小红书、B站、脉脉等反爬严格的平台将大幅受限或无法采集。
+
+### 站点经验文件
+
+`references/site-patterns/` 目录下维护了各站点的爬取经验（API 端点、CDP 脚本模式、已知陷阱），针对 AI Agent 面试题采集场景做了专项增强。采集对应平台前必须加载，若本地文件不存在则回退到 `web-access` skill 的同名文件。
+
+| 平台 | 经验文件 |
+|------|---------|
+| 小红书 | `references/site-patterns/xiaohongshu.md` |
+| B站 | `references/site-patterns/bilibili.md` |
+| BOSS直聘 | `references/site-patterns/zhipin.com.md` |
 
 ## 目录结构
 
 ```
-├── SKILL.md                    # Skill 定义（核心）
+├── SKILL.md                    # Skill 定义（核心，含完整 7 步流程）
 ├── package.json                # npm 包配置（支持 npx 安装）
 ├── bin/
 │   └── cli.js                  # CLI 入口脚本
+├── references/
+│   └── site-patterns/          # 站点爬取经验文件
+│       ├── xiaohongshu.md
+│       ├── bilibili.md
+│       └── zhipin.com.md
 ├── samples/                    # 输出示例
-│   ├── ai_agent_interview_questions_20260502.md
+│   ├── ai_agent_interview_questions_20260514.md
 │   ├── company_index.md
+│   ├── _raw_step1_results.md   # 中间产物（Step 1 原始采集）
+│   ├── _step2_cleaned.md       # 中间产物（Step 2 清洗去重）
+│   ├── _step3_classified.md    # 中间产物（Step 3 分类）
+│   ├── _step4_final.md         # 中间产物（Step 4 增量合并）
 │   ├── company/
-│   │   ├── 互联网公司/
-│   │   │   └── 京东.md
-│   │   ├── 外企/
-│   │   │   └── 微软.md
-│   │   └── ...
+│   │   └── 其他/
+│   │       └── 通用面试题.md
 │   └── answers/
 │       ├── module_01_prompt_llm.md
 │       ├── module_02_rag.md
-│       └── ...
+│       ├── module_03_tool_calling.md
+│       ├── module_04_agent_architecture.md
+│       ├── module_05_multi_agent.md
+│       ├── module_06_engineering.md
+│       ├── module_07_deployment.md
+│       └── module_08_evolution.md
 └── README.md
 ```
 
