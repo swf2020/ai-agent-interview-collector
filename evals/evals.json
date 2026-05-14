@@ -1,0 +1,40 @@
+{
+  "skill_name": "ai-agent-interview-collector",
+  "evals": [
+    {
+      "id": 1,
+      "name": "pipeline-dedup-classify-format",
+      "prompt": "你是面试题处理流水线专家。请严格按以下 SKILL.md 规则处理 `evals/fixtures/pipeline_test_input.md` 中的 8 条原始数据，执行 Step 2（清洗去重）→ Step 3（分类）→ Step 5（生成 Markdown）。\n\n规则摘要：\n- 过滤：泛泛而谈（如\"你了解XX吗\"）、HR问题（薪资等）、付费内容\n- 去重：语义相似度>85%合并为一条，来源用/分隔，保留最清晰版本\n- 分类：Module 1-8 + 公司大类（互联网公司/外企/AI公司/硬件芯片/创业公司/其他）+ 轮次（一面/二面/三面/HR面/总监面/加面/综合）\n- 传统软件工程题标[标记:传统软件工程题]，无[Module N]，无解答链接\n- 公司名标准化：字节→字节跳动\n- 输出章节标题含emoji（🎯/📦/⭐）\n- AI Agent题格式：[Module N][来源:平台][公司大类|公司名|轮次][YYYY-MM] 题目？ → 详见[解答](answers/module_XX_xxx.md#QN)\n\n输出两样东西：\n1. 生成的完整 Markdown 题集文件\n2. 自检清单（逐条确认：过滤数、合并数、分类正确性、emoji存在性、传统SE题标记、链接格式）",
+      "expected_output": "8条输入→5-6条有效输出（过滤#3#7，合并#1#2）；KV Cache合并来源标注小红书/B站；公司标准化：字节→字节跳动→互联网公司，MiniMax→AI公司，华为→硬件芯片；RPC vs HTTP有传统SE标记无Module无链接；章节标题含🎯/📦/⭐；AI Agent题含解答链接",
+      "assertions": [
+        {"name": "filter_count", "description": "过滤掉2条（泛泛而谈#3 + HR问题#7）"},
+        {"name": "dedup_merge", "description": "KV Cache 2条合并为1条，来源标注小红书/B站"},
+        {"name": "output_count", "description": "最终有效输出5-6条"},
+        {"name": "company_normalize", "description": "字节→字节跳动，大类→互联网公司"},
+        {"name": "company_ai", "description": "MiniMax→AI公司"},
+        {"name": "company_hardware", "description": "华为→硬件芯片"},
+        {"name": "module_m1", "description": "KV Cache和模型量化归类到Module 1"},
+        {"name": "module_m2", "description": "混合检索归类到Module 2"},
+        {"name": "module_m3", "description": "Function Calling归类到Module 3"},
+        {"name": "round_label", "description": "轮次标注正确（一面/二面/综合）"},
+        {"name": "traditional_se_marker", "description": "RPC vs HTTP含[标记:传统软件工程题]，无[Module N]，无解答链接"},
+        {"name": "emoji_headers", "description": "章节标题含🎯/📦/⭐"},
+        {"name": "answer_link", "description": "AI Agent题含→详见[解答](answers/module_XX_xxx.md#QN)"},
+        {"name": "file_header", "description": "文件头含采集日期、来源列表、统计行"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "company-index-validation",
+      "prompt": "你是文件校验专家。请对 `samples/` 目录执行 SKILL.md Step 7.2 的完整校验：\n\n检查A（正向）：遍历 company_index.md 中所有已采集公司的链接，确认指向的 .md 文件真实存在\n检查B（反向）：遍历 company/ 下所有实际 .md 文件，确认每个在索引中都有对应条目\n检查C（一致性）：确认统计表格数字与实际一致；已采集公司不在待采集列表中\n\n输出校验报告：通过/发现问题+修正动作",
+      "expected_output": "三项检查全部通过，或列出发现的问题并自动修正",
+      "assertions": [
+        {"name": "check_a_links", "description": "company_index.md中所有已采集公司链接指向的文件真实存在"},
+        {"name": "check_a_format", "description": "链接格式为[公司名](company/{大类}/{公司名}.md)，无samples/前缀"},
+        {"name": "check_b_coverage", "description": "company/下所有.md文件在索引已采集公司中有条目"},
+        {"name": "check_c_stats", "description": "统计表格中已采集公司数和题目数与实际一致"},
+        {"name": "check_c_no_duplicate", "description": "已采集公司不在待采集公司列表中"}
+      ]
+    }
+  ]
+}
