@@ -83,6 +83,20 @@ description: >
 4. Function Calling Agent MCP 面试 2025 2026
 5. prompt engineering LLM 面试题 2025 2026
 
+**使用 web_access 采集具体平台前，必须先加载对应站点的经验文件：**
+
+本 skill 在 `references/site-patterns/` 目录下维护了各站点的爬取经验（API 端点、CDP 脚本模式、已知陷阱），这些文件针对 AI Agent 面试题采集场景做了专项增强。直接用 web_access 通用能力（打开页面、滚动）处理反爬严格的站点大概率失败——每个站点有特殊的 API、鉴权参数和反直觉行为，必须提前加载经验文件才能正确操作。
+
+| 平台 | 采集前必须先 Read |
+|------|------------------|
+| 小红书 | `references/site-patterns/xiaohongshu.md` |
+| B站 | `references/site-patterns/bilibili.md` |
+| BOSS直聘 | `references/site-patterns/zhipin.com.md` |
+
+> 加载后你会获得该站点的：URL 结构与路由规则、已验证的 CDP curl 命令模板（含关键鉴权参数）、已知陷阱列表（如小红书缺少 xsec_token 返回 404、B站搜索 API 直接 curl 触发 412 风控、Referer 头导致字幕 URL 为空等）。跳过此步骤会导致反复试错，大量浪费 token。
+>
+> 若本地文件不存在或内容不足，回退到 `${CLAUDE_SKILL_DIR}/web-access/references/site-patterns/{domain}.md`。
+
 **对每条搜索结果：**
 - 使用 web_access CDP 模式打开笔记链接，提取正文（文字笔记直接取文本，图片笔记用 OCR）
 - 从正文中提取明确以面试题形式出现的问题句
