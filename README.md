@@ -51,21 +51,21 @@
 ### 使用 npx 安装（推荐）
 
 ```bash
-npx ai-agent-interview-collector
+npx interview-collector
 ```
 
-该命令会自动将 skill 文件复制到 `~/.claude/skills/ai-agent-interview-collector` 目录。
+该命令会自动将 skill 文件复制到 `~/.claude/skills/interview-collector` 目录。
 
 更新 skill：
 
 ```bash
-npx ai-agent-interview-collector update
+npx interview-collector update
 ```
 
 卸载：
 
 ```bash
-npx ai-agent-interview-collector uninstall
+npx interview-collector uninstall
 ```
 
 ### 在 Claude Code 中使用
@@ -89,8 +89,8 @@ npx ai-agent-interview-collector uninstall
 1. 将本仓库的 `SKILL.md` 文件复制到 OpenClaw 的 skills 目录：
 
 ```bash
-mkdir -p ~/.openclaw/skills/ai-agent-interview-collector
-cp SKILL.md ~/.openclaw/skills/ai-agent-interview-collector/
+mkdir -p ~/.openclaw/skills/interview-collector
+cp SKILL.md ~/.openclaw/skills/interview-collector/
 ```
 
 2. 在 OpenClaw 对话中使用相同的触发词。

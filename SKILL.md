@@ -1,5 +1,5 @@
 ---
-name: ai-agent-interview-collector
+name: interview-collector
 description: >
   多角色社招面试题自动采集与整理工具。支持 AI Agent、后端开发、前端开发、产品经理、测试、UI设计、算法等角色。
   当用户提到"面试题采集"、"收集XX面试题"、"更新面试题集"、"刷新面试题"、"跑一次面试题采集"、"整理面试题"

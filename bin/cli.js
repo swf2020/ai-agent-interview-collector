@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-const SKILL_NAME = 'ai-agent-interview-collector';
+const SKILL_NAME = 'interview-collector';
 const SOURCE_DIR = path.join(__dirname, '..');
 const CLAUDE_DIR = path.join(os.homedir(), '.claude');
 const SKILLS_DIR = path.join(CLAUDE_DIR, 'skills');
@@ -84,6 +84,6 @@ switch (command) {
     update();
     break;
   default:
-    console.log(`Usage: npx ai-agent-interview-collector [install|update|uninstall]`);
+    console.log(`Usage: npx interview-collector [install|update|uninstall]`);
     break;
 }
