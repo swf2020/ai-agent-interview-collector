@@ -48,24 +48,18 @@
 
 ## 安装
 
-### 使用 npx 安装（推荐）
+### 安装与更新
 
 ```bash
-npx interview-collector
+npx skills add swf2020/interview-collector --all -g
 ```
 
-该命令会自动将 skill 文件复制到 `~/.claude/skills/interview-collector` 目录。
-
-更新 skill：
-
-```bash
-npx interview-collector update
-```
+该命令会将 skill 安装到全局 skills 目录。重复执行即可更新到最新版本。
 
 卸载：
 
 ```bash
-npx interview-collector uninstall
+npx skills remove interview-collector -g
 ```
 
 ### 在 Claude Code 中使用

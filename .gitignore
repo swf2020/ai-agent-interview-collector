@@ -7,3 +7,4 @@ ocr_tmp/
 scripts/
 # npm
 node_modules/
+.claude
